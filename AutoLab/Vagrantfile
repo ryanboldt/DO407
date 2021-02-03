@@ -1,0 +1,48 @@
+Vagrant.configure("2") do |config|
+  config.vm.provision "shell", inline: "echo Hello"
+
+  config.vm.provider "hyperv" do |hv|
+    hv.memory = 1024
+    hv.cpus =1
+    hv.vm_integration_services = {
+        guest_service_interface: true,
+        time_synchronization: true
+    }  
+  end
+
+  config.vm.define "web1" do |web1|
+    web1.vm.box = "generic/centos8"
+    web1.vm.hostname = "web1.demo.com"
+  end
+
+  config.vm.define "web2" do |web2|
+    web2.vm.box = "generic/centos8"
+    web2.vm.hostname = "web2.demo.com"
+    web2.vm.provision "shell", inline: "echo web2"
+  end
+
+  config.vm.provision :shell, path: "bootstrap-node.sh"
+  config.vm.provision "shell", inline: "echo Goodbye"
+end
+
+Vagrant.configure("2") do |config|
+    config.vm.provision "shell", inline: "echo Hello"
+  
+    config.vm.provider "hyperv" do |hv|
+      hv.memory = 2048
+      hv.cpus =2
+      hv.vm_integration_services = {
+          guest_service_interface: true,
+          time_synchronization: true
+      }  
+    end
+  
+    config.vm.define "ansible-host" do |ah|
+      ah.vm.box = "generic/centos8"
+      ah.vm.hostname = "ansible-host.demo.com"
+      ah.vm.provision "shell", inline: "echo Anisible-Host"
+    end
+    
+    config.vm.provision :shell, path: "bootstrap-node.sh"
+    config.vm.provision "shell", inline: "echo Goodbye"
+  end
